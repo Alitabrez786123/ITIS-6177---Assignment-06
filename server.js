@@ -1,4 +1,5 @@
 const express = require('express'); 
+const axios = require('axios');
 const app = express(); 
 const port = 3000;
 
@@ -181,7 +182,16 @@ app.delete('/students/:id', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-
+app.get('/say', async (req, res) => {
+    try {
+        const keyword = req.query.keyword || "nothing";
+        const azureFunctionUrl = `https://waseemfunction123.azurewebsites.net/api/Function?keyword=${keyword}`;
+        const response = await axios.get(azureFunctionUrl);
+        res.json(response.data);
+    } catch (error) {
+        res.status(500).json({ error: "Error calling Azure Function" });
+    }
+});
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
     console.log(`Swagger Docs available at http://localhost:${port}/api-docs`);
